@@ -16,12 +16,13 @@ angular.module('sotos.crop-image').directive('imageCrop', [ function() {
         transclude: true,
         scope: {
             cropOptions: '=cropOptions',
-            imageOut: '='
+            imageOut: '=',
         },
         controller:['$scope', function($scope) {
             var editCanvas ,viewCanvas,mainCanvas,srcCanvas;
             var editCanvasCtx ,viewCanvasCtx,mainCanvasCtx,srcCanvasCtx;
             var image = new Image();
+            image.setAttribute('crossOrigin', 'anonymous');
             var watermarkImage = new Image();
             var watermarkRatio=0;
             var ratio_width ;
@@ -433,15 +434,22 @@ angular.module('sotos.crop-image').directive('imageCrop', [ function() {
                          temp_canvas.height=  theSelection.h*ratio_width;
                      }
 
+                     $scope.cropOptions['cropArea'] = {
+                        'x' : theSelection.x*ratio_width, 
+                        'y' : theSelection.y*ratio_width, 
+                        'w' : theSelection.w*ratio_width,
+                        'h' : theSelection.h*ratio_width
+                     }
                      //draw temp canvas
                      temp_ctx.drawImage(srcCanvas, theSelection.x*ratio_width, theSelection.y*ratio_width, theSelection.w*ratio_width, theSelection.h*ratio_width, 0, 0, temp_canvas.width,   temp_canvas.height);
                      //chance the original image with crop for edit watermark
-                  $scope.cropOptions.image =  temp_canvas.toDataURL(imageType);
+
+                    $scope.cropOptions.image =  temp_canvas.toDataURL(imageType);
                      //set to the scope
                   $scope.imageOut= $scope.cropOptions.image;
                      //close the crop tool
                   $scope.cropOptions.viewShowCropTool=false;
-                  $scope.$apply();
+                  //$scope.$apply();
                  }
 
             };
